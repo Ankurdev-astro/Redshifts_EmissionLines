@@ -1,0 +1,5 @@
+data/
+results_default.fits
+LineRatio_nodust.txt
+.idea/
+__pycache__
