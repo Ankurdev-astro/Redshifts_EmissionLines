@@ -149,7 +149,8 @@ num_sum = num_sum + frac_r * b_list[calc_log_index[-1]+1] * (1 / np.square(b_lis
 den_sum = den_sum + frac_r * (1 / np.square(b_list_std[calc_log_index[-1]+1]))
 blue_sum = num_sum/den_sum
 print(blue_sum)
-print(b_list[7:11])
+print(b_list[7:11]) 
+# ok 
 
 #put these vals in bins
 
