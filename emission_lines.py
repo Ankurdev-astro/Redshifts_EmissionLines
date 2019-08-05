@@ -131,7 +131,7 @@ frac_l = (wavelength_b[calc_log_index[0]] - log_wvlngth[3]) / 0.25
 print('fracl',frac_l)
 print('fracr', frac_r) # This frac has to be mul by the next lin index val and put in present log bin
 
-num_sum  = 0
+num_sum  = 0 ##
 den_sum = 0
 blue_sum = 0
 
