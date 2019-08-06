@@ -98,7 +98,40 @@ def makeOriginalTemplate(all_Lines_Template, xaxis):  # function not in use
         ySum += template
     return ySum
 
-def rebin():
+def rebin(range_begin,range_end, bin_counts, lin_wavelength, raw_data, std_dev ):
+    # (3676, 6088.25, 1515, wavelength_b, b_list, b_list_std)
     e = np.e
     ln = np.log
-    log_wvlngth = np.logspace(ln(3676), ln(6088.25), 1515, base=e)  # Blue spectra 3022 bins 1515
+    log_wvlngth = np.logspace(ln(range_begin), ln(range_end), bin_counts, base=e)  # Blue spectra 3022 bins
+    logunit_wvlngth = ln(log_wvlngth)
+    rebin_val = np.zeros(bin_counts)
+
+    for log_indx in range(0, bin_counts-1):
+        calc_log = np.where(np.logical_and((lin_wavelength >= log_wvlngth[log_indx]),
+                                          (lin_wavelength < log_wvlngth[log_indx + 1])))
+        calc_log_index = (np.asarray(calc_log)).flatten()
+        frac_r = (log_wvlngth[log_indx + 1] - lin_wavelength[calc_log_index[-1]]) / 0.25
+        frac_l = (lin_wavelength[calc_log_index[0]] - log_wvlngth[log_indx]) / 0.25
+
+        if (frac_l or frac_r) <= 0: #  redundant check
+            print(frac_r, frac_l)
+
+        num_sum = 0
+        den_sum = 0
+        blue_sum = 0
+
+        for i in calc_log_index:
+            num_sum = raw_data[i] * (1 / np.square(std_dev[i]))
+            den_sum = (1 / np.square(std_dev[i]))
+
+        if log_indx != 0:
+            num_sum += frac_l * raw_data[calc_log_index[0] - 1] * (1 / np.square(std_dev[calc_log_index[0] - 1]))
+            den_sum += frac_l * (1 / np.square(std_dev[calc_log_index[0] - 1]))
+
+        if calc_log_index[-1] < (len(lin_wavelength) - 1):
+            num_sum += frac_r * raw_data[calc_log_index[-1] + 1] * (1 / np.square(std_dev[calc_log_index[-1] + 1]))
+            den_sum += + frac_r * (1 / np.square(std_dev[calc_log_index[-1] + 1]))
+
+        blue_sum = num_sum / den_sum
+        rebin_val[log_indx] = blue_sum
+    return log_wvlngth, rebin_val

@@ -106,71 +106,67 @@ y_b = np.correlate(tem_b, b_div, 'full') # better CCF
 # ax5.plot(wavelength, tem2)
 
 '''Logspace and Rebinning'''
-e = np.e
-ln = np.log
-# print(log(e))
-# log_wvlngth = np.logspace(ln(3676), ln(9594.25), 5745, base = e) # correct ---> full spectra
-log_wvlngth = np.logspace(ln(3676), ln(6088.25), 1515, base = e)  #  Blue spectra 3022 bins 1515
-# print(ln(log_wvlngth[100])-ln(log_wvlngth[99]) )
-# print(ln(log_wvlngth[600])-ln(log_wvlngth[599]) )
-# print(log_wvlngth[:15])
-logunit_wvlngth = ln(log_wvlngth) # works , correct
+# e = np.e
+# ln = np.log
+# # log_wvlngth = np.logspace(ln(3676), ln(9594.25), 5745, base = e) # correct ---> full spectra
+# log_wvlngth = np.logspace(ln(3676), ln(6088.25), 1515, base = e)  #  Blue spectra 3022 bins 1515
+# logunit_wvlngth = ln(log_wvlngth) # works , correct
+#
+# rebin_val = np.zeros(1515)
+#
+# #  start with blue spectra only. map log scale to log_wvlngth and put value in bin[i]. Refer Bull notes
+# #  For putting the value in the bin, take weighted mean. At each edge you have to check for fraction of value in that
+# #   bin and with that fraction*value
+#
+# for log_indx in range(0,1515 -1):
+#
+#     calc_log = np.where(np.logical_and((wavelength_b >= log_wvlngth[log_indx]),
+#                                        (wavelength_b < log_wvlngth[log_indx+1])))
+#
+#     calc_log_index = (np.asarray(calc_log)).flatten()
+#
+#     frac_r = (log_wvlngth[log_indx+1] - wavelength_b[calc_log_index[-1]]) / 0.25
+#     frac_l = (wavelength_b[calc_log_index[0]] - log_wvlngth[log_indx]) / 0.25
+#
+#     if (frac_l or frac_r) <= 0:
+#         print(frac_r, frac_l)
+#
+#     num_sum  = 0
+#     den_sum = 0
+#     blue_sum = 0
+#
+#     for i in calc_log_index:
+#         num_sum = b_list[i]*(1/np.square(b_list_std[i]))
+#         den_sum = (1/np.square(b_list_std[i]))
+#
+#     if log_indx != 0:
+#         num_sum += frac_l * b_list[calc_log_index[0]-1] * (1 / np.square(b_list_std[calc_log_index[0]-1]))
+#         den_sum += frac_l * (1 / np.square(b_list_std[calc_log_index[0]-1]))
+#
+#     if calc_log_index[-1] < 9648:
+#         num_sum += frac_r * b_list[calc_log_index[-1]+1] * (1 / np.square(b_list_std[calc_log_index[-1]+1]))
+#         den_sum += + frac_r * (1 / np.square(b_list_std[calc_log_index[-1]+1]))
+#     blue_sum = num_sum/den_sum
+#     rebin_val[log_indx] = blue_sum
+# print(rebin_val[:10])
 
-# bins = np.arange(5745) # full spectra
-# rebin_val = np.arange(3022) #blue spectra
-rebin_val = np.zeros(1515)
+log_wvlngth_b, rebin_val_b = fn.rebin(3676, 6088.25, 1515, wavelength_b, b_list, b_list_std)
+# print(rebin_val_b[:10])
 
-#  start with blue spectra only. map log scale to log_wvlngth and put value in bin[i]. Refer Bull notes
-#  For putting the value in the bin, take weighted mean. At each edge you have to check for fraction of value in that
-#   bin and with that fraction*value
-
-for log_indx in range(0,1515 -1):
-    # print('\n log_indx', log_indx)
-    calc_log = np.where(np.logical_and((wavelength_b >= log_wvlngth[log_indx]),
-                                       (wavelength_b < log_wvlngth[log_indx+1])))
-    # print(wavelength_b[know[-1:]])
-    calc_log_index = (np.asarray(calc_log)).flatten()
-    # print(calc_log)
-    # print(wavelength_b[calc_log_index])
-    frac_r = (log_wvlngth[log_indx+1] - wavelength_b[calc_log_index[-1]]) / 0.25
-    frac_l = (wavelength_b[calc_log_index[0]] - log_wvlngth[log_indx]) / 0.25
-    # print('fracl',frac_l)
-    # print('fracr', frac_r) # This frac has to be mul by the next lin index val and put in present log bin
-    if (frac_l or frac_r) <= 0:
-        print(frac_r, frac_l)
-
-    num_sum  = 0
-    den_sum = 0
-    blue_sum = 0
-
-    for i in calc_log_index:
-        num_sum = b_list[i]*(1/np.square(b_list_std[i]))
-        den_sum = (1/np.square(b_list_std[i]))
-
-    if log_indx != 0:
-        # print('first', log_indx)
-        num_sum += frac_l * b_list[calc_log_index[0]-1] * (1 / np.square(b_list_std[calc_log_index[0]-1]))
-        den_sum += frac_l * (1 / np.square(b_list_std[calc_log_index[0]-1]))
-    # print(calc_log_index[-1])
-    if calc_log_index[-1] < 9648:
-        num_sum += frac_r * b_list[calc_log_index[-1]+1] * (1 / np.square(b_list_std[calc_log_index[-1]+1]))
-        den_sum += + frac_r * (1 / np.square(b_list_std[calc_log_index[-1]+1]))
-    blue_sum = num_sum/den_sum
-    # print('blue_sum', blue_sum)
-    # print(b_list[7:11])
-    # print(log_indx)
-    rebin_val[log_indx] = blue_sum
-
-# rebin_val[3] = 100
-# print(len(rebin_val))
-# print(rebin_val[-50:])
-    #put these vals in bins
+log_wvlngth_r, rebin_val_r = fn.rebin(5772, 9594.25, 1526, wavelength_r, r_list, r_list_std)
+# print(rebin_val_r[:50])
 
 fig9 = plt.figure(figsize=(14.4,10.8))
-fn.plot_fig(fig9,111,log_wvlngth, rebin_val, label1='Log')
-# plt.show()
+fn.plot_fig(fig9,111,log_wvlngth_b, rebin_val_b, label1='Log')
+
 fig10 = plt.figure(figsize=(14.4,10.8))
-fn.plot_fig(fig10,111,wavelength_b, b_list,colour1='r', label1='Linear')
+fn.plot_fig(fig10,111,wavelength_b, b_list, label1='Linear')
+
+fig91 = plt.figure(figsize=(14.4,10.8))
+fn.plot_fig(fig91,111,log_wvlngth_r, rebin_val_r, colour1='r', label1='Log')
+
+fig101 = plt.figure(figsize=(14.4,10.8))
+fn.plot_fig(fig101,111,wavelength_r, r_list,colour1='r', label1='Linear')
 plt.show()
 
 fig6 = plt.figure(figsize=(14.4,10.8))
