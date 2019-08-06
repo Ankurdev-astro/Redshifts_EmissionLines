@@ -97,3 +97,8 @@ def makeOriginalTemplate(all_Lines_Template, xaxis):  # function not in use
         template = makeGaus(index_data_original(everyLine[0]), xaxis, everyLine[1],std=10)
         ySum += template
     return ySum
+
+def rebin():
+    e = np.e
+    ln = np.log
+    log_wvlngth = np.logspace(ln(3676), ln(6088.25), 1515, base=e)  # Blue spectra 3022 bins 1515
