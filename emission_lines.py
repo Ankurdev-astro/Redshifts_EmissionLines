@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import funcfile_emission as fn  # read function module
+import funcfile_emission_x1 as fn  # read function module
 import warnings
 warnings.filterwarnings("ignore")
 #OPR3_10660_blue
@@ -13,14 +13,24 @@ warnings.filterwarnings("ignore")
 
 # Good List: 60557423 (0.205076), 61504585 (0.3062), 61524537, 59990194 (0.0178),
 
-fits_file_b = './data/OPR3_121000135_blue.fits'  # the input fits filename
-fits_file_r = './data/OPR3_121000135_red.fits'  # the input fits filename
+# fits_file_b = './data/OPR3_95767497_blue.fits'  # the input fits filename #last_one_standing
+# fits_file_r = './data/OPR3_95767497_red.fits'  # the input fits filename
+# fits_file_b = './data/OPR3_121776242_blue.fits'  # the input fits filename # missing lines
+# fits_file_r = './data/OPR3_121776242_red.fits'  # the input fits filename
+
+file_number = 268845718
+fits_file_b = './data/OPR3_' + str(file_number) + '_blue.fits'  # the input fits filename
+fits_file_r = './data/OPR3_' + str(file_number) + '_red.fits'  # the input fits filename
 
 # z=0.205076 #good1
 # z = 1.0164 # bad
 # z= 0.0178 #good2
 
-z = 2.369
+# z = 1.559 #last_one_standing
+# z = 2.40 # missing lines
+
+z = 2.431
+
 file_b = fn.read_fits(fits_file_b)
 file_r = fn.read_fits(fits_file_r)
 
@@ -62,7 +72,7 @@ gal_zip = fn.prepareTemplate(key='SF')
 
 tem_r = fn.makeShiftedTemplate(gal_zip, xaxis_r, z,'r')
 tem_b = fn.makeShiftedTemplate(gal_zip, xaxis_b, z, 'b')
-tem2 = fn.makeOriginalTemplate(gal_zip, xaxis_ori)
+# tem2 = fn.makeOriginalTemplate(gal_zip, xaxis_ori)
 
 
 # fig3 = plt.figure(figsize=(8,6))
@@ -112,7 +122,7 @@ xaxis3 = np.arange(-9649, 9648, 1)
 log_wvlngth_b, rebin_val_b, rebin_ivar_b = fn.rebin(3676, 6088.25, 1515, wavelength_b, b_list, b_list_std) # 1515
 # print(rebin_val_b[:10])
 
-log_wvlngth_r, rebin_val_r, rebin_ivar_r = fn.rebin(5772, 9594.25, 1526, wavelength_r, r_list, r_list_std)
+log_wvlngth_r, rebin_val_r, rebin_ivar_r = fn.rebin(5772, 9594.25, 1526, wavelength_r, r_list, r_list_std) #1526
 # print(rebin_val_r[:50])
 
 
@@ -136,15 +146,18 @@ fig6 = plt.figure(figsize=(14.4,10.8))
 ax6_1 = fn.plot_fig(fig6,111,log_wvlngth_b, rebin_val_b, label1='Spectrum')
 if isinstance(tem_b,int):
     tem_b = np.zeros(9649)
-fn.plot_fig(fig6,111,wavelength_b, tem_b, colour1='k', title='Blue Spectra', label1='Template', alpha=0.6)
+# fn.plot_fig(fig6,111,wavelength_b, tem_b, colour1='k', title='Blue Spectra', label1='Template', alpha=0.6)
 ax6_1.set_xlabel('Wavelength')
-ax6_1.set_ylim(top=1.5e-16)
+ax6_1.set_ylim(top=1.5e-16, bottom=-0.5e-16)
 # fn.plot_fig(fig6,222,wavelength_r[:],r_div, title='Red Spectra',label1='Spectrum',colour1='r')
 fig7 = plt.figure(figsize=(14.4,10.8))
-fn.plot_fig(fig7,111,log_wvlngth_r, rebin_val_r, title='Red Spectra',label1='Spectrum',colour1='r')
-ax6_2 = fn.plot_fig(fig7,111,wavelength_r[:],tem_r, colour1='k', label1='Template', alpha=0.6, title='Red Spectra')
+# ax6_2 = fn.plot_fig(fig7,111,wavelength_r[:], r_list, label1='Spectrum', colour1='r')
+ax6_2 = fn.plot_fig(fig7,111,log_wvlngth_r, rebin_val_r, title='Red Spectra',label1='Spectrum',colour1='r')
+if isinstance(tem_r,int):
+    tem_r = np.zeros(15289)
+# fn.plot_fig(fig7,111,wavelength_r[:],tem_r, colour1='k', label1='Template', alpha=0.6, title='Red Spectra')
 ax6_2.set_xlabel('Wavelength')
-ax6_2.set_ylim(top=1.5e-16)
+ax6_2.set_ylim(top=1.5e-16, bottom=-0.5e-16)
 # ax6_3 = fn.plot_fig(fig6,223,xaxis3,y_b)
 # ax6_3.set_ylabel('Blue - CCF')
 # ax6_3.set_xlabel('Lag (Pixels)')

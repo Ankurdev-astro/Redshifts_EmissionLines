@@ -1,5 +1,5 @@
 import numpy as np
-'''Function File of x4 dataset'''
+'''Function File of x1 dataset'''
 def read_fits(fits_file):
     ''' This function opens the fits file and takes fits filename as parameter'''
     from astropy.io import fits
@@ -10,24 +10,18 @@ def index_data(lambda1, colour):
     '''This function converts wavelength to
         it's respective index. Colour key: 'b' for blue; 'r' for red '''
     if colour == 'b':
-        i = (lambda1 - 3676.0) / 1     # 0.25
+        i = (lambda1 - 3676.0) / 0.25     # 0.25
     elif colour == 'r':
-        i = (lambda1 - 5772.0) / 1     # 0.25
+        i = (lambda1 - 5772.0) / 0.25     # 0.25
     return int(i)
-
-def index_data_original(lambda_1):
-    '''This function converts wavelength to
-        it's respective index.'''
-    i1 = (lambda_1 - 1000.0) / 1.0    # 0.25
-    return int(i1)
 
 def wavelengthConvert(index,colour):
     '''Convert into Wavelength
         Colour key: 'b' for blue; 'r' for red '''
     if colour == 'b':
-        w = (3676 + index * 1.0)       # 0.25
+        w = (3676 + index * 0.25)       # 0.25
     elif colour == 'r':
-        w = (5772 + index * 1.0)       # 0.25
+        w = (5772 + index * 0.25)       # 0.25
     return w
 
 def plot_fig(fig,subplot,xaxis,yaxis, title = '', label1 = '', colour1 = 'C0', alpha = 1):
@@ -74,7 +68,7 @@ def makeShiftedTemplate(all_Lines_Template, xaxis, z, colour = ''):
         for everyLine in all_Lines_Template:
             if 5772 < everyLine[0] * (z + 1) < 9594.25:
                 shifted = index_data(everyLine[0] * (z + 1), 'r')
-                template = makeGaus(shifted, xaxis, everyLine[1], std=10)
+                template = makeGaus(shifted, xaxis, everyLine[1], std=50)
                 ySum += template
                 # print(everyLine[0] * (z + 1), '\t',  everyLine[1])
         return ySum
@@ -82,7 +76,7 @@ def makeShiftedTemplate(all_Lines_Template, xaxis, z, colour = ''):
         for everyLine in all_Lines_Template:
             if 3676.0 < everyLine[0] * (z + 1) < 6088.25:
                 shifted = index_data(everyLine[0] * (z + 1), 'b')
-                template = makeGaus(shifted, xaxis, everyLine[1], std=10)
+                template = makeGaus(shifted, xaxis, everyLine[1], std=50)
                 ySum += template
                 # print(everyLine[0] * (z + 1), '\t',  everyLine[1])
         return ySum
@@ -107,8 +101,8 @@ def rebin(range_begin,range_end, bin_counts, lin_wavelength, raw_data, std_dev )
         calc_log = np.where(np.logical_and((lin_wavelength >= log_wvlngth[log_indx]),
                                           (lin_wavelength < log_wvlngth[log_indx + 1])))
         calc_log_index = (np.asarray(calc_log)).flatten()
-        frac_r = (log_wvlngth[log_indx + 1] - lin_wavelength[calc_log_index[-1]]) / 1    # 0.25
-        frac_l = (lin_wavelength[calc_log_index[0]] - log_wvlngth[log_indx]) / 1          # 0.25
+        frac_r = (log_wvlngth[log_indx + 1] - lin_wavelength[calc_log_index[-1]]) / 0.25    # 0.25
+        frac_l = (lin_wavelength[calc_log_index[0]] - log_wvlngth[log_indx]) / 0.25          # 0.25
 
         num_sum = 0
         den_sum = 0
